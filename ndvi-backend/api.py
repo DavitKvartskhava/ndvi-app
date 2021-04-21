@@ -39,7 +39,7 @@ def ndvi():
 	#Add the full paths
 	out_filename = NDVI_IMAGES_PATH+out_filename
 	filename = OG_IMAGES_PATH+filename
-
+	print("It was cached!")
 	if(not isCached(out_filename)):
 		#If the analysis has not been done previously, convert to NDVI and save to disk.
 		ndvi_im = NDVI(filename, output_file=out_filename)
