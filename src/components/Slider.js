@@ -18,7 +18,7 @@ class Slider extends React.Component {
           <br />
           <input
             type="range"
-            min="1"
+            min="0"
             max="200"
             value={this.props.value}
             onChange={this.handleChange}

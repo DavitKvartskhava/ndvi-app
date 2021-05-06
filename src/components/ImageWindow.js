@@ -4,8 +4,9 @@ import Slider from "./Slider";
 class ImageWindow extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { brightness: 100, contrast: 100, saturation: 100 };
+    this.state = { brightness: 100, contrast: 100, saturation: 100, sepia: 0};
   }
+
   updateState = (setting, range) => {
     this.setState({ ...this.state, [setting]: range });
   };
@@ -13,19 +14,23 @@ class ImageWindow extends React.Component {
   render() {
     console.log(this.state);
     return (
-      <div className="window">
+      <div className="window" style={{marginBottom: '70px'}}>
         <h1>{this.props.analysisType}</h1>
         <img
-          src={this.props.filename && this.props.reqURL + this.props.filename}
+          src={(this.props.loaded) ? this.props.reqURL + this.props.filename : "/loading.gif"}
           style={{
             filter: `brightness(${this.state.brightness}%) 
                     contrast(${this.state.contrast}%) 
-                    saturate(${this.state.saturation}%)`,
+                    saturate(${this.state.saturation}%)
+                    sepia(${this.state.sepia}%)`
+
           }}
+          onLoad={() => {this.props.loadingHandler()}}
           width="500"
           height="500"
           alt="niri_img"
         />
+
         <Slider
           type="brightness"
           value={this.state.brightness}
@@ -39,6 +44,11 @@ class ImageWindow extends React.Component {
         <Slider
           type="saturation"
           value={this.state.sharpness}
+          onChange={this.updateState}
+        />
+        <Slider
+          type="sepia"
+          value={this.state.sepia}
           onChange={this.updateState}
         />
       </div>

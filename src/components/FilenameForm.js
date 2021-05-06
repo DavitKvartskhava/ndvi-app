@@ -31,7 +31,7 @@ class FilenameForm extends React.Component {
         </form>
 
         <h3 style={{ textAlign: "center", marginTop: "50px" }}>
-          Analyzing file:
+          filename:
           {this.state.lastValue}
         </h3>
       </>

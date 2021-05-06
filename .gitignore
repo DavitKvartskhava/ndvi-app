@@ -1,6 +1,7 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
-/ndvi-backend/ndvi-images
+/ndvi-backend/processed-images
 /ndvi-backend/og-images
+**/__pycache__
 
 # dependencies
 /node_modules

@@ -6,16 +6,44 @@ Functionality: This file uses flask to provide an API for the image analysis int
 '''
 
 import flask
-from ndvi import * 
+from img_scripts import NDVI, VARI, TGI
 import os
 
 app = flask.Flask(__name__)
 app.config["DEBUG"] = True
 
 OG_IMAGES_PATH = "./og-images/"
-NDVI_IMAGES_PATH = "./ndvi-images/"
+PR_IMAGES_PATH = "./processed-images/"
 
-def isCached(out_file):
+def prepare_image(filename, analysis_type):
+
+	file_stem = filename.split('.')[0]
+	out_filename = '{type}-{stem}.jpg'.format(stem=file_stem, type=analysis_type)
+
+
+	#Add the full paths
+	out_filename = PR_IMAGES_PATH+out_filename
+	filename = OG_IMAGES_PATH+filename
+
+	if(not file_exists(filename)):
+		return '404.jpeg'
+
+	if(not file_exists(out_filename)):
+		#If the analysis has not been done previously, process according to analysis_type and save to disk.
+		if(analysis_type=='ndvi'):
+			ndvi_im = NDVI(filename, output_file=out_filename)
+			ndvi_im.convert()
+		elif(analysis_type=='vari'):
+			vari_im = VARI(filename, output_file=out_filename)
+			vari_im.convert_VARI()
+		elif(analysis_type=='tgi'):
+			tgi_im = TGI(filename, output_file=out_filename)
+			tgi_im.convert_TGI()
+
+
+	return out_filename
+
+def file_exists(out_file):
 	'''
 	Checks if the analysis has already been saved to the disk.
 	'''
@@ -25,27 +53,24 @@ def isCached(out_file):
 @app.route('/nir', methods=['GET'])
 def nir():
 	filename = OG_IMAGES_PATH+flask.request.args['filename']
-	print(filename)
+	if(not file_exists(filename)):
+		filename = '404.jpeg'
 	return flask.send_file(filename, mimetype='image/gif')
-
-
 
 @app.route('/ndvi', methods=['GET'])
 def ndvi():
-	filename = flask.request.args['filename']
-	file_stem = filename.split('.')[0]
-	out_filename = 'ndvi-{stem}.jpg'.format(stem=file_stem)
-
-	#Add the full paths
-	out_filename = NDVI_IMAGES_PATH+out_filename
-	filename = OG_IMAGES_PATH+filename
-	print("It was cached!")
-	if(not isCached(out_filename)):
-		#If the analysis has not been done previously, convert to NDVI and save to disk.
-		ndvi_im = NDVI(filename, output_file=out_filename)
-		ndvi_im.convert()
-
-
+	out_filename = prepare_image(flask.request.args['filename'], 'ndvi')
 	return flask.send_file(out_filename, mimetype='image/gif')
+
+@app.route('/tgi', methods=['GET'])
+def tgi():
+	out_filename = prepare_image(flask.request.args['filename'], 'tgi')
+	return flask.send_file(out_filename, mimetype='image/gif')
+
+@app.route('/vari', methods=['GET'])
+def vari():
+	out_filename = prepare_image(flask.request.args['filename'], 'vari')
+	return flask.send_file(out_filename, mimetype='image/gif')
+
 
 app.run()
