@@ -14,7 +14,7 @@ class ImageWindow extends React.Component {
   render() {
     console.log(this.state);
     return (
-      <div className="window" style={{marginBottom: '70px'}}>
+      <div className="window" style={{marginBottom: '70px', padding: "20px 20px 20px 20px"}}>
         <h1>{this.props.analysisType}</h1>
         <img
           src={(this.props.loaded) ? this.props.reqURL + this.props.filename : "/loading.gif"}
@@ -26,8 +26,8 @@ class ImageWindow extends React.Component {
 
           }}
           onLoad={() => {this.props.loadingHandler()}}
-          width="500"
-          height="500"
+          width="100%"
+          height="auto"
           alt="niri_img"
         />
 
